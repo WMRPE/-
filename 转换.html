@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <style>
+        body { margin: 0; padding: 20px; font-family: sans-serif; background: #fff; color: #333; }
+        .box { display: flex; flex-direction: column; gap: 12px; max-width: 500px; margin: auto; }
+        
+        /* 1:1 UI浅灰风格 */
+        textarea { 
+            width: 100%; border: none; background: #f2f2f2; 
+            border-radius: 12px; padding: 15px; font-size: 16px; 
+            box-sizing: border-box; outline: none;
+        }
+
+        /* 符号选择器 */
+        .symbols { display: flex; gap: 8px; flex-wrap: wrap; margin: 5px 0; }
+        .symbol-item { 
+            padding: 8px 12px; background: #f2f2f2; border-radius: 8px; 
+            font-size: 14px; cursor: pointer; border: 1px solid #ddd;
+        }
+        .symbol-item.active { background: #007bff; color: #fff; border-color: #007bff; }
+
+        /* 1:1 按钮 */
+        button { 
+            width: 100%; background: #007bff; color: #fff; 
+            border: none; border-radius: 12px; padding: 15px; 
+            font-size: 16px; font-weight: bold; cursor: pointer;
+        }
+        button:active { opacity: 0.8; }
+
+        /* 水 */
+        .watermark { 
+            text-align: center; color: #ccc; font-size: 14px; 
+            margin-top: 30px; letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <textarea id="i" rows="3" placeholder="请输入内容"></textarea>
+    
+    <div class="symbols" id="symbolList">
+        <div class="symbol-item active" onclick="sel(this, '༺')">༺</div>
+        <div class="symbol-item" onclick="sel(this, '꧁')">꧁</div>
+        <div class="symbol-item" onclick="sel(this, '꧂')">꧂</div>
+        <div class="symbol-item" onclick="sel(this, '№')">№</div>
+        <div class="symbol-item" onclick="sel(this, '৳')">৳</div>
+        <div class="symbol-item" onclick="sel(this, 'の')">の</div>
+    </div>
+
+    <button onclick="doConvert()">转换并复制</button>
+    
+    <textarea id="o" rows="3" placeholder="转换结果" readonly></textarea>
+    
+    <button onclick="doCopy()">复制</button>
+    <button onclick="doClear()">清空</button>
+
+    <div class="watermark">紀</div>
+</div>
+
+<script>
+    var currentSymbol = '༺';
+
+    function sel(el, s) {
+        var items = document.querySelectorAll('.symbol-item');
+        items.forEach(item => item.classList.remove('active'));
+        el.classList.add('active');
+        currentSymbol = s;
+    }
+
+    function doConvert() {
+        var val = document.getElementById('i').value;
+        if (!val) return;
+        
+        // 加符逻辑
+        var res = val.split('').map(c => (c == '\n' || c == ' ') ? c : currentSymbol + c).join('');
+        
+        document.getElementById('o').value = res;
+        copy(res);
+    }
+
+    function doCopy() {
+        var val = document.getElementById('o').value;
+        if (!val) return;
+        copy(val);
+        alert('已');
+    }
+
+    function doClear() {
+        document.getElementById('i').value = '';
+        document.getElementById('o').value = '';
+    }
+
+    function copy(str) {
+        var el = document.createElement('textarea');
+        el.value = str;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+    }
+</script>
+
+</body>
+</html>
